@@ -8,6 +8,7 @@ class ArabicSpellChecker:
     def __init__(self, word_list_path):
         """Initialize the spell checker with a word list."""
         self.word_list = self.load_word_list(word_list_path)
+        self.word_list = {self.normalize_text(word) for word in self.word_list}
         
     def load_word_list(self, path):
         """Load Arabic words from a text file."""
