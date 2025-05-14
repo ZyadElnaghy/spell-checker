@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import scrolledtext
+from tkinter import scrolledtext, ttk, font
 import re
 import os
 import Levenshtein
@@ -171,7 +171,26 @@ class SpellCheckerApp:
         """Initialize the GUI application."""
         self.root = root
         self.root.title("Arabic Spell Checker")
-        self.root.geometry("600x500")
+        self.root.geometry("700x600")
+        
+        # Set dark theme colors
+        self.colors = {
+            "bg_dark": "#282c34",
+            "bg_medium": "#3b3f4c",
+            "text_color": "#e6e6e6",
+            "accent": "#61afef",
+            "highlight": "#c678dd",
+            "button": "#98c379",
+            "button_hover": "#7eba69",
+            "error": "#e06c75"
+        }
+        
+        # Configure root window with dark theme
+        self.root.configure(bg=self.colors["bg_dark"])
+        self.root.option_add("*Font", "Arial 11")
+        
+        # Configure ttk styles
+        self.configure_styles()
         
         # Initialize spell checker
         current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -181,33 +200,117 @@ class SpellCheckerApp:
         # Create GUI elements
         self.create_widgets()
         
+    def configure_styles(self):
+        """Configure ttk styles for modern appearance"""
+        style = ttk.Style()
+        
+        # Configure button style
+        style.configure(
+            "TButton",
+            background=self.colors["button"],
+            foreground=self.colors["bg_dark"],
+            font=("Arial", 12, "bold"),
+            padding=10,
+            relief="flat"
+        )
+        
+        # Configure button hover style
+        style.map(
+            "TButton",
+            background=[("active", self.colors["button_hover"])]
+        )
+        
+        # Configure label style
+        style.configure(
+            "TLabel",
+            background=self.colors["bg_dark"],
+            foreground=self.colors["text_color"],
+            font=("Arial", 12)
+        )
+        
+        # Configure frame style
+        style.configure(
+            "TFrame",
+            background=self.colors["bg_dark"]
+        )
+        
     def create_widgets(self):
         """Create and arrange the GUI widgets."""
+        # Main container
+        main_container = ttk.Frame(self.root, style="TFrame")
+        main_container.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+        
+        # App title
+        title_font = font.Font(family="Arial", size=18, weight="bold")
+        title_label = tk.Label(
+            main_container, 
+            text="Arabic Spell Checker", 
+            font=title_font, 
+            bg=self.colors["bg_dark"],
+            fg=self.colors["highlight"]
+        )
+        title_label.pack(pady=(0, 20))
+        
         # Input frame
-        input_frame = tk.Frame(self.root)
-        input_frame.pack(pady=10, fill=tk.X, padx=10)
+        input_frame = ttk.Frame(main_container, style="TFrame")
+        input_frame.pack(fill=tk.X, pady=10)
         
-        tk.Label(input_frame, text="Enter Arabic text:").pack(anchor='w')
+        input_label = ttk.Label(input_frame, text="Enter Arabic text:", style="TLabel")
+        input_label.pack(anchor='w', pady=(0, 5))
         
-        # Text input
-        self.text_input = scrolledtext.ScrolledText(input_frame, height=6, width=60, wrap=tk.WORD)
+        # Text input with modern styling
+        self.text_input = scrolledtext.ScrolledText(
+            input_frame, 
+            height=6, 
+            width=60, 
+            wrap=tk.WORD,
+            font=("Arial", 14),
+            bg=self.colors["bg_medium"],
+            fg=self.colors["text_color"],
+            insertbackground=self.colors["text_color"],  # cursor color
+            relief="flat",
+            borderwidth=0
+        )
         self.text_input.pack(fill=tk.X, pady=5)
-        self.text_input.configure(font=("Arial", 14))
         
-        # Check button
-        check_button = tk.Button(input_frame, text="Check Spelling", command=self.check_spelling)
+        # Button Frame (for center alignment)
+        button_frame = ttk.Frame(input_frame, style="TFrame")
+        button_frame.pack(fill=tk.X, pady=10)
+        
+        # Check button with modern styling
+        check_button = ttk.Button(
+            button_frame, 
+            text="Check Spelling", 
+            command=self.check_spelling,
+            style="TButton"
+        )
         check_button.pack(pady=10)
         
+        # Separator
+        separator = ttk.Separator(main_container, orient='horizontal')
+        separator.pack(fill=tk.X, pady=15)
+        
         # Results frame
-        result_frame = tk.Frame(self.root)
-        result_frame.pack(pady=10, fill=tk.BOTH, expand=True, padx=10)
+        result_frame = ttk.Frame(main_container, style="TFrame")
+        result_frame.pack(fill=tk.BOTH, expand=True, pady=10)
         
-        tk.Label(result_frame, text="Results:").pack(anchor='w')
+        result_label = ttk.Label(result_frame, text="Results:", style="TLabel")
+        result_label.pack(anchor='w', pady=(0, 5))
         
-        # Results display
-        self.result_display = scrolledtext.ScrolledText(result_frame, height=12, width=60, wrap=tk.WORD)
+        # Results display with modern styling
+        self.result_display = scrolledtext.ScrolledText(
+            result_frame, 
+            height=12, 
+            width=60, 
+            wrap=tk.WORD,
+            font=("Arial", 14),
+            bg=self.colors["bg_medium"],
+            fg=self.colors["text_color"],
+            relief="flat",
+            borderwidth=0
+        )
         self.result_display.pack(fill=tk.BOTH, expand=True, pady=5)
-        self.result_display.configure(font=("Arial", 14), state='disabled')
+        self.result_display.configure(state='disabled')
         
     def check_spelling(self):
         """Handle the spell checking process when button is clicked."""
@@ -239,8 +342,37 @@ class SpellCheckerApp:
         """Update the result display with new text."""
         self.result_display.configure(state='normal')
         self.result_display.delete('1.0', tk.END)
-        self.result_display.insert('1.0', text)
+        
+        if text == "No spelling errors found!":
+            self.result_display.configure(fg=self.colors["button"])
+            self.result_display.insert('1.0', text)
+        elif text == "Please enter some text to check.":
+            self.result_display.configure(fg=self.colors["highlight"])
+            self.result_display.insert('1.0', text)
+        else:
+            self.result_display.configure(fg=self.colors["text_color"])
+            
+            # Parse text to highlight misspelled words
+            lines = text.split("\n")
+            self.result_display.insert('1.0', lines[0] + "\n")  # Original text
+            
+            if len(lines) > 1:
+                self.result_display.insert(tk.END, "\n" + lines[1] + "\n")  # Misspelled words header
+                
+                for line in lines[2:]:
+                    if line.startswith("• "):
+                        # Highlight misspelled word
+                        self.result_display.insert(tk.END, "\n")
+                        self.result_display.insert(tk.END, line.split(":")[0], "misspelled")
+                        if ":" in line:
+                            self.result_display.insert(tk.END, ":" + line.split(":")[1])
+                    else:
+                        self.result_display.insert(tk.END, "\n" + line)
+            
         self.result_display.configure(state='disabled')
+        
+        # Add tag for misspelled words
+        self.result_display.tag_configure("misspelled", foreground=self.colors["error"])
 
 if __name__ == "__main__":
     root = tk.Tk()
