@@ -35,16 +35,16 @@ class ArabicSpellChecker:
     def get_character_groups(self):
         """Get groups of similar Arabic characters that are commonly confused."""
         return [
-            {'ا', 'أ', 'إ', 'آ'},  # Alif variations
-            {'ي', 'ى'},           # Ya and Alif Maksura
-            {'ه', 'ة'},           # Ha and Ta Marbuta
-            {'و', 'ؤ'},           # Waw variations
-            {'ك', 'گ'},           # Kaf variations
-            {'ت', 'ط'},           # Ta-like sounds
-            {'س', 'ص'},           # Seen-like sounds
-            {'د', 'ض'},           # Dal-like sounds
-            {'ح', 'ه', 'خ'},      # Throaty sounds
-            {'ز', 'ذ', 'ظ'}       # Z-like sounds
+            {'ا', 'أ', 'إ', 'آ'},  
+            {'ي', 'ى'},         
+            {'ه', 'ة'},           
+            {'و', 'ؤ'},           
+            {'ك', 'گ'},           
+            {'ت', 'ط'},           
+            {'س', 'ص'},           
+            {'د', 'ض'},           
+            {'ح', 'ه', 'خ'},      
+            {'ز', 'ذ', 'ظ'}       
         ]
         
     def calculate_phonetic_distance(self, char1, char2):
@@ -54,12 +54,11 @@ class ArabicSpellChecker:
             
         char_groups = self.get_character_groups()
         
-        # Check if both characters are in the same phonetic group
         for group in char_groups:
             if char1 in group and char2 in group:
-                return 0.5  # Characters in same group are more similar
+                return 0.5  
         
-        return 1  # Default distance for unrelated characters
+        return 1  
         
     def custom_distance(self, word1, word2):
         """Calculate a custom distance between two words considering Arabic phonetics."""
@@ -101,7 +100,6 @@ class ArabicSpellChecker:
             else:
                 normalized_distance = adjusted_distance
             
-            # Apply prefix and suffix matching bonuses (important for Arabic roots)
             prefix_length = 0
             for i in range(min(word_len, dict_word_len)):
                 if word[i] == dict_word[i]:

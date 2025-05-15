@@ -19,6 +19,7 @@ A simple Arabic spell checker with a GUI built using Python and tkinter.
 ## Installation
 
 1. Install required packages:
+
    ```
    pip install python-Levenshtein
    ```
@@ -28,6 +29,7 @@ A simple Arabic spell checker with a GUI built using Python and tkinter.
 ## Usage
 
 1. Run the script:
+
    ```
    python arabic_spell_checker.py
    ```
